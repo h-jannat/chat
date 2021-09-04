@@ -10,7 +10,7 @@ class _SignInPageState extends State<SignInPage>{
 Widget build(BuildContext context){
   return Scaffold(
     appBar:  PreferredSize(
-    preferredSize: const Size.fromHeight(70),
+    preferredSize: const Size.fromHeight(60),
     child:appBarMain(context),
 
     ),
