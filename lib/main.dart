@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Chat App',
       debugShowCheckedModeBanner: false,
       theme:
-          ThemeData(primarySwatch: ctmColor(0), bottomAppBarColor: ctmColor(0)),
+          ThemeData(primarySwatch: ctmColor(0), bottomAppBarColor: ctmColor(3)),
       home: SignInPage(),
     );
   }
