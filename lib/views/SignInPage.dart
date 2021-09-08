@@ -42,7 +42,7 @@ class _SignInPageState extends State<SignInPage> {
                       labelText: 'Password', border: inputBorder),
                 ),
                 SizedBox(
-                  height: 25,
+                  height: 30,
                 ),
                 ElevatedButton(
                   child: Text("SIGN IN"),
