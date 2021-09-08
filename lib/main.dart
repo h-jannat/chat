@@ -12,8 +12,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chat App',
       debugShowCheckedModeBanner: false,
-      theme:
-          ThemeData(primarySwatch: ctmColor(0), bottomAppBarColor: ctmColor(3)),
+      theme: ThemeData(
+        primarySwatch: ctmMaterialColor(0),
+        bottomAppBarColor: ctmMaterialColor(3),
+        accentColor: ctmMaterialColor(2),
+      ),
       home: SignInPage(),
     );
   }

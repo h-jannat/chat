@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-MaterialColor ctmColor(key) {
-  List rgbs = [
-    [0, 161, 157],
-    [255, 248, 229],
-    [255, 179, 68],
-    [224, 93, 93],
-  ];
+List rgbs = [
+  [0, 161, 157],
+  [255, 248, 229],
+  [255, 179, 68],
+  [224, 93, 93],
+];
+MaterialColor ctmMaterialColor(key) {
   List prim = ["0xFF00A19D", "0xFFF8E5FE", "0xFFFFB344", "0xFFE05D5D"];
   Map customColors = {};
   for (int i = 0; i < rgbs.length; i++) {
@@ -23,4 +23,12 @@ MaterialColor ctmColor(key) {
   }
 
   return customColors[key];
+}
+
+Color ctmColor(key) {
+  Map colors = {};
+  for (int i = 0; i < rgbs.length; i++) {
+    colors[i] = Color.fromARGB(255, rgbs[i][0], rgbs[i][1], rgbs[i][2]);
+  }
+  return colors[key];
 }

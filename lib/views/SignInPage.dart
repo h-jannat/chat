@@ -1,5 +1,6 @@
 import 'package:chat/views/widget.dart';
 import 'package:flutter/material.dart';
+import '../colors.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -23,7 +24,6 @@ class _SignInPageState extends State<SignInPage> {
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(top: 100, left: 50, right: 50),
-          height: 700,
           alignment: Alignment.center,
           child: Form(
             key: _formKey,
@@ -45,9 +45,23 @@ class _SignInPageState extends State<SignInPage> {
                   height: 25,
                 ),
                 ElevatedButton(
-                  child: Text("LOGIN"),
+                  child: Text("SIGN IN"),
                   onPressed: () => {},
                   style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    minimumSize: Size(double.infinity,
+                        50), // double.infinity is the width and 30 is the height
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  child: Text("SIGN IN WITH GOOGLE"),
+                  onPressed: () => {},
+                  style: ElevatedButton.styleFrom(
+                    primary: ctmColor(2),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25)),
                     minimumSize: Size(double.infinity,
@@ -58,7 +72,7 @@ class _SignInPageState extends State<SignInPage> {
                   height: 25,
                 ),
                 Text("or"),
-                TextButton(onPressed: () => {}, child: Text("Sign up"))
+                TextButton(onPressed: () => {}, child: Text("SIGN UP"))
               ],
             ),
           ),
