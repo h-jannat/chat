@@ -30,10 +30,11 @@ class _SignInPageState extends State<SignInPage> {
             child: Column(
               children: [
                 TextField(
-                    decoration: InputDecoration(
-                  labelText: 'Username',
-                  border: inputBorder,
-                )),
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    border: inputBorder,
+                  ),
+                ),
                 SizedBox(
                   height: 20,
                 ),
@@ -41,8 +42,15 @@ class _SignInPageState extends State<SignInPage> {
                   decoration: InputDecoration(
                       labelText: 'Password', border: inputBorder),
                 ),
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => {},
+                    child: Text("Forget password?"),
+                  ),
+                ),
                 SizedBox(
-                  height: 30,
+                  height: 15,
                 ),
                 ElevatedButton(
                   child: Text("SIGN IN"),
@@ -71,8 +79,16 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   height: 25,
                 ),
-                Text("or"),
-                TextButton(onPressed: () => {}, child: Text("SIGN UP"))
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Not registered yet?"),
+                    TextButton(
+                      onPressed: () => {},
+                      child: Text("SIGN UP"),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
