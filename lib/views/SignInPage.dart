@@ -1,6 +1,9 @@
 import 'package:chat/views/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../colors.dart';
+import '../utilities/signIn.dart';
+
 
 class SignInPage extends StatefulWidget {
   @override
@@ -9,6 +12,9 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = new GlobalKey<FormState>();
+  TextEditingController usernameController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
+  final _loginController = Get.put(LoginController());
   //border styles
   OutlineInputBorder inputBorder = OutlineInputBorder(
     borderSide: const BorderSide(width: 2.0),
@@ -29,7 +35,8 @@ class _SignInPageState extends State<SignInPage> {
             key: _formKey,
             child: Column(
               children: [
-                TextField(
+                TextFormField(
+                  controller: usernameController,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     border: inputBorder,
@@ -38,7 +45,8 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   height: 20,
                 ),
-                TextField(
+                TextFormField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                       labelText: 'Password', border: inputBorder),
                 ),
@@ -67,7 +75,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 ElevatedButton(
                   child: Text("SIGN IN WITH GOOGLE"),
-                  onPressed: () => {},
+                  onPressed: () => {_loginController.signInEmailPass("", "")},
                   style: ElevatedButton.styleFrom(
                     primary: ctmColor(2),
                     shape: RoundedRectangleBorder(
