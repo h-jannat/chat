@@ -1,9 +1,10 @@
-import 'package:chat/views/SignInPage.dart';
+import 'package:chat/views/signInPage.dart';
 import 'package:flutter/material.dart';
 import './colors.dart';
+import 'package:get/get.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(GetMaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
