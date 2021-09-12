@@ -1,4 +1,7 @@
+import 'package:chat/views/VarifyPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -9,12 +12,26 @@ class LoginController extends GetxController {
   final _googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _user;
   GoogleSignInAccount get user => _user!;
-  
+
   Future signInEmailPass(String email, String password) async {
     try {
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       print(result);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future signUpEmailPass(
+      String email, String password, BuildContext context) async {
+    try {
+      UserCredential result = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      print(result);
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => VarifyPage()),);
     } catch (e) {
       print(e);
     }
