@@ -75,7 +75,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 ElevatedButton(
                   child: Text("SIGN IN WITH GOOGLE"),
-                  onPressed: () => {_loginController.signInEmailPass("", "")},
+                  onPressed: () => {_loginController.googleSignIn()},
                   style: ElevatedButton.styleFrom(
                     primary: ctmColor(2),
                     shape: RoundedRectangleBorder(
