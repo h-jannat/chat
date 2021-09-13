@@ -1,4 +1,4 @@
-import 'package:chat/views/VarifyPage.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,19 +24,32 @@ class LoginController extends GetxController {
   }
 
   Future signUpEmailPass(
-      String email, String password, BuildContext context) async {
+      String email, String password) async {
     try {
       UserCredential result = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       print(result);
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => VarifyPage()),);
+
     } catch (e) {
       print(e);
     }
   }
-
+void varifyEmail(){
+  User? _user = _firebaseAuth.currentUser;
+   _user?.sendEmailVerification();
+}
+Future isVarifiredEmail()async{
+  try{
+  User? _user = _firebaseAuth.currentUser;
+  await _user?.reload();
+  return _user?.emailVerified;
+  }
+  catch(e){
+    print(e.toString());
+    return false;
+  }
+}
   Future googleSignIn() async {
     final _googleUser = await _googleSignIn.signIn();
     print(_googleUser);

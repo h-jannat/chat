@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage(this.title);
+class HomePage extends StatelessWidget {
+  HomePage(this.title);
   final title;
   @override
   Widget build(BuildContext context) {

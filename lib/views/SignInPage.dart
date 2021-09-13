@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../colors.dart';
 import '../utilities/signIn.dart';
-
+import 'package:chat/views/VarifyPage.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -20,6 +20,15 @@ class _SignInPageState extends State<SignInPage> {
     borderSide: const BorderSide(width: 2.0),
     borderRadius: BorderRadius.circular(25.0),
   );
+  void _signUp(context) async {
+    print(usernameController.text + passwordController.text);
+    await _loginController.signUpEmailPass(
+        usernameController.text, passwordController.text);
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => VarifyPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +70,11 @@ class _SignInPageState extends State<SignInPage> {
                   height: 15,
                 ),
                 ElevatedButton(
-                  child: Text("SIGN IN"),
-                  onPressed: () => {},
+                  child: Text("SIGN Up"),
+                  onPressed: () {
+                    print("signUp");
+                    _signUp(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25)),
