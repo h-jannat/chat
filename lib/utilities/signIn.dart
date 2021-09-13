@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,46 +9,54 @@ import 'package:google_sign_in/google_sign_in.dart';
 class LoginController extends GetxController {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _googleSignIn = GoogleSignIn();
-  GoogleSignInAccount? _user;
-  GoogleSignInAccount get user => _user!;
-
+  bool _isVarifiredEmail = false;
   Future signInEmailPass(String email, String password) async {
+    print("Sign in email pass");
     try {
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+          print("result");
+          
       print(result);
-    } catch (e) {
+    } on FirebaseAuthException catch (e){  
       print(e);
     }
   }
 
-  Future signUpEmailPass(
-      String email, String password) async {
+  Future signUpEmailPass(String email, String password) async {
     try {
       UserCredential result = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       print(result);
-
     } catch (e) {
+     
       print(e);
     }
   }
-void varifyEmail(){
-  User? _user = _firebaseAuth.currentUser;
-   _user?.sendEmailVerification();
-}
-Future isVarifiredEmail()async{
-  try{
-  User? _user = _firebaseAuth.currentUser;
-  await _user?.reload();
-  return _user?.emailVerified;
+
+  void varifyEmail() {
+    User? _user = _firebaseAuth.currentUser;
+    _user?.sendEmailVerification();
   }
-  catch(e){
-    print(e.toString());
-    return false;
+
+  Future isVarifiredEmailFetch() async {
+    try {
+      User? _user = _firebaseAuth.currentUser;
+      if (_user != null) {
+        await _user.reload();
+        _isVarifiredEmail = _user.emailVerified;
+        print("user");
+        print(_user);
+        print( _isVarifiredEmail);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
-}
+get user => _firebaseAuth.currentUser;
+  get isVarifiredEmail => _isVarifiredEmail;
+
   Future googleSignIn() async {
     final _googleUser = await _googleSignIn.signIn();
     print(_googleUser);
@@ -58,5 +65,13 @@ Future isVarifiredEmail()async{
     final _credential = GoogleAuthProvider.credential(
         accessToken: _googleAuth.accessToken, idToken: _googleAuth.idToken);
     await _firebaseAuth.signInWithCredential(_credential);
+  }
+
+
+  Future signOut() async {
+    await _firebaseAuth.signOut();
+
+    print('signout');
+    print(_firebaseAuth.currentUser);
   }
 }

@@ -21,6 +21,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: ctmMaterialColor(0),
         bottomAppBarColor: ctmMaterialColor(3),
         accentColor: ctmMaterialColor(2),
+        buttonTheme: ButtonThemeData(
+      buttonColor: ctmColor(2),     //  <-- dark color
+      textTheme: ButtonTextTheme.accent, //  <-- this auto selects the right color
+    )
       ),
       home: SignInPage(),
     );

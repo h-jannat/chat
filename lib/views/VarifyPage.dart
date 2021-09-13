@@ -3,7 +3,6 @@ import 'package:chat/views/HomePage.dart';
 import 'package:get/get.dart';
 
 import '../utilities/signIn.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class VarifyPage extends StatefulWidget {
@@ -16,9 +15,15 @@ class _VarifyPageState extends State<VarifyPage> {
   Timer? _timer;
   @override
   void initState() {
-    _loginController.varifyEmail();
+  
+    super.initState();
+  }
+  void varify(){
+      _loginController.varifyEmail();
     _timer = Timer.periodic(Duration(seconds: 10), (_timer) async {
-      if (await _loginController.isVarifiredEmail()) {
+      await _loginController.isVarifiredEmailFetch();
+      if (_loginController.isVarifiredEmail) {
+        _timer.cancel();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => HomePage("Home"),
@@ -26,14 +31,17 @@ class _VarifyPageState extends State<VarifyPage> {
         );
       }
     });
-    super.initState();
   }
-
+@override
+void dispose(){
+  _timer?.cancel();
+  super.dispose();
+}
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
-        child: Text("Varifying page"),
+        child: TextButton(onPressed: varify, child: Text("Send varification link")),
       ),
     );
   }
