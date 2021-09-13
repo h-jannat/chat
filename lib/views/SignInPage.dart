@@ -18,52 +18,48 @@ class _SignInPageState extends State<SignInPage> {
   bool _error = false;
   final _loginController = Get.put(LoginController());
   //border styles
+
+  void runAfterSignIn() async {
+    if (_loginController.user != null) {
+      await _loginController.isVarifiredEmailFetch();
+      if (_loginController.isVarifiredEmail) {
+        print(_loginController.isVarifiredEmail);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HomePage("Home"),
+          ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => VarifyPage(),
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
+  void _signIn(context) async {
+    await _loginController.signInEmailPass(
+        usernameController.text, passwordController.text);
+
+    runAfterSignIn();
+  }
+
+  void _googleSignIn(context) async {
+    print("google");
+    await _loginController.googleSignIn();
+    runAfterSignIn();
+  }
+
   OutlineInputBorder inputBorder = OutlineInputBorder(
     borderSide: const BorderSide(width: 2.0),
     borderRadius: BorderRadius.circular(25.0),
   );
-  void _signIn(context) async {
-    await _loginController.signInEmailPass(
-        usernameController.text, passwordController.text);
-    await _loginController.isVarifiredEmailFetch();
-    print(_loginController.isVarifiredEmail);
-    if (_loginController.isVarifiredEmail) {
-      print(_loginController.isVarifiredEmail);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HomePage("Home"),
-        ),
-      );
-    } else {
-      _error = true;
-    }
-  }
-  void _googleSignIn(context) async {
-    await _loginController.googleSignIn();
-    await _loginController.isVarifiredEmailFetch();
-    if(_loginController.user != null){
-    print(_loginController.isVarifiredEmail);
-    if (_loginController.isVarifiredEmail) {
-      print(_loginController.isVarifiredEmail);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HomePage("Home"),
-        ),
-      );
-    }
-    else{
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => VarifyPage(),
-        ),
-      );
-    }
-    } else {
-      _error = true;
-    }
-  }
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +100,7 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   height: 15,
                 ),
-                _error ? Text("Login errror") : SizedBox(),
+                _error ? Text("Login error") : SizedBox(),
                 ElevatedButton(
                   child: Text("SIGN IN"),
                   onPressed: () {
@@ -123,7 +119,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 ElevatedButton(
                   child: Text("SIGN IN WITH GOOGLE"),
-                  onPressed: () => _googleSignIn,
+                  onPressed: () => _googleSignIn(context),
                   style: ElevatedButton.styleFrom(
                     primary: ctmColor(2),
                     shape: RoundedRectangleBorder(
