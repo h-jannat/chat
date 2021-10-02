@@ -1,5 +1,6 @@
 import 'package:chat/views/HomePage.dart';
-import 'package:chat/views/widget.dart';
+import 'package:chat/views/SignUpPage.dart';
+import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../colors.dart';
@@ -16,6 +17,7 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController usernameController = TextEditingController(text: "");
   TextEditingController passwordController = TextEditingController(text: "");
   bool _error = false;
+  bool _isObscure = true;
   final _loginController = Get.put(LoginController());
   //border styles
 
@@ -65,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: appBarMain(context),
+        child: AppBarMain(),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -87,8 +89,20 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 TextFormField(
                   controller: passwordController,
+                  obscureText: _isObscure,
                   decoration: InputDecoration(
-                      labelText: 'Password', border: inputBorder),
+                    labelText: 'Password',
+                    border: inputBorder,
+                    suffixIcon: IconButton(
+                        icon: Icon(_isObscure
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _isObscure = !_isObscure;
+                          });
+                        }),
+                  ),
                 ),
                 Container(
                   alignment: Alignment.centerRight,
@@ -136,7 +150,11 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     Text("Not registered yet?"),
                     TextButton(
-                      onPressed: () => {},
+                      onPressed: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => SignUpPage(),
+                        ),
+                      ),
                       child: Text("SIGN UP"),
                     ),
                   ],

@@ -1,4 +1,6 @@
-import 'package:chat/views/widget.dart';
+import 'package:chat/views/HomePage.dart';
+import 'package:chat/views/SignInPage.dart';
+import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../colors.dart';
@@ -14,19 +16,63 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = new GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController(text: "");
   TextEditingController passwordController = TextEditingController(text: "");
+  TextEditingController reEnterPasswordController =
+      TextEditingController(text: "");
   final _loginController = Get.put(LoginController());
+  bool _error = false;
+  bool _isObscure = true;
   //border styles
   OutlineInputBorder inputBorder = OutlineInputBorder(
     borderSide: const BorderSide(width: 2.0),
     borderRadius: BorderRadius.circular(25.0),
   );
+
+  void _runAfterSignUp() async {
+    if (_loginController.user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => VarifyPage(),
+        ),
+      );
+    } else {
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
   void _signUp(context) async {
-    print(usernameController.text + passwordController.text);
-    await _loginController.signUpEmailPass(
-        usernameController.text, passwordController.text);
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => VarifyPage()),
-    );
+    if (_formKey.currentState!.validate()) {
+      await _loginController.signUpEmailPass(
+          usernameController.text, passwordController.text);
+     _runAfterSignUp();
+    }
+  }
+
+  _passwordValidator(value) {
+    if (value.length < 6) {
+      return "Password length should be more than 5 characters";
+    } else
+      return null;
+  }
+
+  _emailValidator(value) {
+    if (value == null || value == "") {
+      return "Email can't be empty";
+    } else if (!value.contains("@") || !value.contains(".")) {
+      return "Input should be an email";
+    } else
+      return null;
+  }
+
+  _equalValidator(value, mainValue) {
+    print("equality");
+    print(value);
+    print(mainValue);
+    if (value != mainValue) {
+      return "Values are not matched";
+    } else
+      return null;
   }
 
   @override
@@ -34,7 +80,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: appBarMain(context),
+        child: AppBarMain(),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -44,20 +90,38 @@ class _SignUpPageState extends State<SignUpPage> {
             key: _formKey,
             child: Column(
               children: [
+                Text(_error ? "Sign up error" : ""),
                 TextFormField(
                   controller: usernameController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     border: inputBorder,
                   ),
+                  validator: (value) => _emailValidator(value),
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 TextFormField(
                   controller: passwordController,
+                  keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(
                       labelText: 'Password', border: inputBorder),
+                  validator: (value) => _passwordValidator(value),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: reEnterPasswordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Re-Enter Password',
+                    border: inputBorder,
+                  ),
+                  validator: (value) =>
+                      _equalValidator(value, passwordController.text),
                 ),
                 Container(
                   alignment: Alignment.centerRight,
@@ -86,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   height: 20,
                 ),
                 ElevatedButton(
-                  child: Text("SIGN IN WITH GOOGLE"),
+                  child: Text("SIGN UP WITH GOOGLE"),
                   onPressed: () => {_loginController.googleSignIn()},
                   style: ElevatedButton.styleFrom(
                     primary: ctmColor(2),
@@ -102,10 +166,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Not registered yet?"),
+                    Text("Already have an account?"),
                     TextButton(
-                      onPressed: () => {},
-                      child: Text("SIGN UP"),
+                      onPressed: () => Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => SignInPage())),
+                      child: Text("SIGN IN"),
                     ),
                   ],
                 )

@@ -18,6 +18,13 @@ class MyApp extends StatelessWidget {
       title: 'Chat App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textTheme:  TextTheme(
+      bodyText1: TextStyle(),
+      bodyText2: TextStyle(),
+    ).apply(
+      bodyColor: Colors.grey[800], 
+      displayColor: Colors.blue, 
+    ),
         primarySwatch: ctmMaterialColor(0),
         bottomAppBarColor: ctmMaterialColor(3),
         accentColor: ctmMaterialColor(2),

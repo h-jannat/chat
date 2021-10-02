@@ -41,8 +41,9 @@ void dispose(){
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
-        child: TextButton(onPressed: varify, child: Text("Send varification link")),
+        child: ElevatedButton(onPressed: varify, child: Text("Send varification link")),
       ),
     );
   }
 }
+
