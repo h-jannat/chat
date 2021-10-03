@@ -1,3 +1,5 @@
+import 'package:chat/utilities/signIn.dart';
+import 'package:chat/views/HomePage.dart';
 import 'package:chat/views/signInPage.dart';
 
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ await Firebase.initializeApp();
 }
 
 class MyApp extends StatelessWidget {
+  final _loginController = Get.put(LoginController());
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
       textTheme: ButtonTextTheme.accent, //  <-- this auto selects the right color
     )
       ),
-      home: SignInPage(),
+      home: _loginController.user ==null? SignInPage(): HomePage(""),
     );
   }
 }

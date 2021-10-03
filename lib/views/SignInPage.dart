@@ -2,6 +2,7 @@ import 'package:chat/views/HomePage.dart';
 import 'package:chat/views/SignUpPage.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import '../colors.dart';
 import '../utilities/signIn.dart';
@@ -14,18 +15,38 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = new GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController(text: "");
-  TextEditingController passwordController = TextEditingController(text: "");
+  TextEditingController _usernameController = TextEditingController(text: "");
+  TextEditingController _passwordController = TextEditingController(text: "");
   bool _error = false;
   bool _isObscure = true;
+  bool _saveLogin = false;
   final _loginController = Get.put(LoginController());
+  final storage = new FlutterSecureStorage();
   //border styles
+  Future getStoredInfo() async {
+    bool _isSaved = await storage.read(key: "isSaved") == "true";
+    setState(() {
+      _saveLogin = _isSaved;
+    });
+    var savedUsername = await storage.read(key: "username");
+    var savedPassword = await storage.read(key: "password");
+    _usernameController.text = savedUsername != null ? savedUsername : "";
+    _passwordController.text = savedPassword != null ? savedPassword : "";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getStoredInfo();
+    print("ssssss");
+    print(_saveLogin);
+  }
 
   void runAfterSignIn() async {
     if (_loginController.user != null) {
       await _loginController.isVarifiredEmailFetch();
       if (_loginController.isVarifiredEmail) {
-        print(_loginController.isVarifiredEmail);
+        storage.write(key: 'isLoggedIn', value: "true");
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => HomePage("Home"),
@@ -47,7 +68,7 @@ class _SignInPageState extends State<SignInPage> {
 
   void _signIn(context) async {
     await _loginController.signInEmailPass(
-        usernameController.text, passwordController.text);
+        _usernameController.text, _passwordController.text);
 
     runAfterSignIn();
   }
@@ -78,7 +99,7 @@ class _SignInPageState extends State<SignInPage> {
             child: Column(
               children: [
                 TextFormField(
-                  controller: usernameController,
+                  controller: _usernameController,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     border: inputBorder,
@@ -88,7 +109,7 @@ class _SignInPageState extends State<SignInPage> {
                   height: 20,
                 ),
                 TextFormField(
-                  controller: passwordController,
+                  controller: _passwordController,
                   obscureText: _isObscure,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -110,6 +131,34 @@ class _SignInPageState extends State<SignInPage> {
                     onPressed: () => {},
                     child: Text("Forget password?"),
                   ),
+                ),
+                Row(
+                  children: [
+                    Text("Save login info"),
+                    Checkbox(
+                        value: _saveLogin,
+                        onChanged: (value) async {
+                          if (value != null) if (value) {
+                            setState(() {
+                              _saveLogin = true;
+                            });
+                            storage.write(key: "isSaved", value: "true");
+                            storage.write(
+                                key: "username",
+                                value: _usernameController.text);
+                            storage.write(
+                                key: "password",
+                                value: _passwordController.text);
+                          } else {
+                            setState(() {
+                              _saveLogin = false;
+                            });
+                            storage.delete(key: "isSaved");
+                            storage.delete(key: "username");
+                            storage.delete(key: "password");
+                          }
+                        }),
+                  ],
                 ),
                 SizedBox(
                   height: 15,
