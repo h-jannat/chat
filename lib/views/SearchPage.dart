@@ -28,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Column(
         children: [
           Container(
-            width: 50,
+            width: 200,
 child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
