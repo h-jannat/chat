@@ -1,3 +1,4 @@
+import 'package:chat/utilities/database.dart';
 import 'package:chat/views/HomePage.dart';
 import 'package:chat/views/SignInPage.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
@@ -15,12 +16,14 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = new GlobalKey<FormState>();
   TextEditingController usernameController = TextEditingController(text: "");
+  TextEditingController displayNameController = TextEditingController(text: "");
   TextEditingController passwordController = TextEditingController(text: "");
   TextEditingController reEnterPasswordController =
       TextEditingController(text: "");
   final _loginController = Get.put(LoginController());
+  final _databaseController = Get.put(DatabaseController());
   bool _error = false;
-  bool _isObscure = true;
+  bool _isByGoogle = false;
   //border styles
   OutlineInputBorder inputBorder = OutlineInputBorder(
     borderSide: const BorderSide(width: 2.0),
@@ -29,6 +32,16 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void _runAfterSignUp() async {
     if (_loginController.user != null) {
+      if (_isByGoogle) {
+        _databaseController.uploadUserData({
+          "name": _loginController.user.displayName,
+          "email": _loginController.user.email
+        });
+      } else
+        _databaseController.uploadUserData({
+          "name": displayNameController.text,
+          "email": usernameController.text
+        });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => VarifyPage(),
@@ -41,17 +54,33 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  void _signUp(context) async {
+  void _signUp() async {
     if (_formKey.currentState!.validate()) {
       await _loginController.signUpEmailPass(
           usernameController.text, passwordController.text);
-     _runAfterSignUp();
+      _runAfterSignUp();
     }
+  }
+
+  void _googleSignUp() async {
+    print("sign up google");
+    setState(() {
+      _isByGoogle = true;
+    });
+    await _loginController.googleSignIn();
+    _runAfterSignUp();
   }
 
   _passwordValidator(value) {
     if (value.length < 6) {
       return "Password length should be more than 5 characters";
+    } else
+      return null;
+  }
+
+  _displayNameValidator(value) {
+    if (value == null || value == "") {
+      return "Email can't be empty";
     } else
       return null;
   }
@@ -78,10 +107,6 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBarMain(),
-      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(top: 100, left: 50, right: 50),
@@ -91,6 +116,18 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               children: [
                 Text(_error ? "Sign up error" : ""),
+                TextFormField(
+                  controller: displayNameController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Display name',
+                    border: inputBorder,
+                  ),
+                  validator: (value) => _displayNameValidator(value),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 TextFormField(
                   controller: usernameController,
                   keyboardType: TextInputType.emailAddress,
@@ -137,7 +174,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: Text("SIGN Up"),
                   onPressed: () {
                     print("signUp");
-                    _signUp(context);
+                    _signUp();
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -151,7 +188,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 ElevatedButton(
                   child: Text("SIGN UP WITH GOOGLE"),
-                  onPressed: () => {_loginController.googleSignIn()},
+                  onPressed: () {
+                    _googleSignUp();
+                  },
                   style: ElevatedButton.styleFrom(
                     primary: ctmColor(2),
                     shape: RoundedRectangleBorder(

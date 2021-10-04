@@ -1,12 +1,9 @@
-import 'package:chat/views/HomePage.dart';
-import 'package:chat/views/SignUpPage.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import '../colors.dart';
 import '../utilities/signIn.dart';
-import 'package:chat/views/VarifyPage.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -47,17 +44,11 @@ class _SignInPageState extends State<SignInPage> {
       await _loginController.isVarifiredEmailFetch();
       if (_loginController.isVarifiredEmail) {
         storage.write(key: 'isLoggedIn', value: "true");
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => HomePage("Home"),
-          ),
+        Navigator.pushReplacementNamed(
+          context, "/home"
         );
       } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => VarifyPage(),
-          ),
-        );
+        Navigator.pushReplacementNamed(context, "/varify");
       }
     } else {
       setState(() {
@@ -86,10 +77,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBarMain(),
-      ),
+     
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(top: 100, left: 50, right: 50),
@@ -97,7 +85,11 @@ class _SignInPageState extends State<SignInPage> {
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 40,
+                ),
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
@@ -199,11 +191,7 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     Text("Not registered yet?"),
                     TextButton(
-                      onPressed: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => SignUpPage(),
-                        ),
-                      ),
+                      onPressed: () => Navigator.pushReplacementNamed(context, "/signUp"),
                       child: Text("SIGN UP"),
                     ),
                   ],

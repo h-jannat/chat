@@ -1,4 +1,5 @@
 import 'package:chat/utilities/signIn.dart';
+import 'package:chat/views/HomePage.dart';
 import 'package:chat/views/SignInPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,8 +10,8 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget{
     final _loginController = Get.put(LoginController());
     void _logOut(BuildContext context) async {
       await _loginController.signOut();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => SignInPage()));
+      Navigator.pushReplacementNamed(context, "/signIn");
+         
     }
 
     return AppBar(
@@ -23,8 +24,6 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget{
           ),
         ),
         Builder(builder: (context) {
-          print("photo");
-          print(_loginController.user.photoURL == null);
           return GestureDetector(
             child: CircleAvatar(
                 backgroundColor: Colors.white,
@@ -34,13 +33,16 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget{
                         "assets/images/user.png",
                       ) as ImageProvider),
             onTap: () {
-              print("open");
               Scaffold.of(context).openEndDrawer();
             },
           );
         }),
       ],
-      title: Text("title"),
+      title: GestureDetector (child: Text("Chat"),
+      onTap: ()=> Navigator.pushReplacementNamed(context, "/home")
+           
+          
+      ),
     );
   }
   @override

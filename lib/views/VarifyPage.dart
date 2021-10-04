@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:chat/views/HomePage.dart';
 import 'package:get/get.dart';
 
 import '../utilities/signIn.dart';
@@ -24,11 +23,7 @@ class _VarifyPageState extends State<VarifyPage> {
       await _loginController.isVarifiredEmailFetch();
       if (_loginController.isVarifiredEmail) {
         _timer.cancel();
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => HomePage("Home"),
-          ),
-        );
+        Navigator.of(context).pushReplacementNamed("/home");
       }
     });
   }

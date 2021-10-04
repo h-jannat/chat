@@ -1,6 +1,8 @@
 import 'package:chat/utilities/signIn.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:chat/views/widgets/Drawer.dart';
+import 'package:chat/views/widgets/SearchBox.dart';
+import 'package:chat/views/widgets/UserCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,34 +16,36 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _loginController = Get.put(LoginController());
-  TextEditingController _searchController = TextEditingController(text: "");
-  OutlineInputBorder inputBorder = OutlineInputBorder(
-    borderSide: const BorderSide(width: 1.0),
-    borderRadius: BorderRadius.circular(25.0),
-  );
+  List _results = [{"username": "user", "email": "as@hkj.com"}, {"username": "user1", "email": "as1@hkj.com"}, {"username": "user2", "email": "as2@hkj.com"}];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarMain(),
       endDrawer: SideDrawer(_loginController),
       body: SingleChildScrollView(
+        child: Container(
+          width: 1000,
           child: Column(
-        children: [
-          Container(
-            width: 200,
-child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-                border: inputBorder,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {},
-                )),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SearchBox((term) {
+                print(term);
+              }),
+              Container(
+                width: 1000,
+                height: 600,
+                alignment: Alignment.center,
+                child: ListView.builder(
+                  itemCount: _results.length,
+                  itemBuilder: (context, index) => 
+                  UserCard(_results[index]["username"], _results[index]["email"]),
+                ),
+              )
+            ],
           ),
-          )
-          
-        ],
-      )),
+        ),
+      ),
     );
   }
 }

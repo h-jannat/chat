@@ -1,6 +1,9 @@
 import 'package:chat/utilities/signIn.dart';
 import 'package:chat/views/HomePage.dart';
-import 'package:chat/views/signInPage.dart';
+import 'package:chat/views/SearchPage.dart';
+import 'package:chat/views/SignInPage.dart';
+import 'package:chat/views/SignUpPage.dart';
+import 'package:chat/views/VarifyPage.dart';
 
 import 'package:flutter/material.dart';
 import './colors.dart';
@@ -36,7 +39,15 @@ class MyApp extends StatelessWidget {
       textTheme: ButtonTextTheme.accent, //  <-- this auto selects the right color
     )
       ),
-      home: _loginController.user ==null? SignInPage(): HomePage(""),
+      home: _loginController.user ==null? SignInPage(): HomePage(),
+       
+  routes: {
+    '/home': (context) =>  HomePage(),
+    '/signIn': (context) => SignInPage(),
+    '/signUp': (context) => SignUpPage(),
+    '/search': (context) => SearchPage(),
+    '/varify': (context) => VarifyPage(),
+  },
     );
   }
 }
