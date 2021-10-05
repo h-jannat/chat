@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 
 class SearchBox extends StatelessWidget {
-  SearchBox(this.onSearch);
+  SearchBox(this.onSearch, this._searchController);
   final onSearch;
-TextEditingController _searchController = TextEditingController(text: "");
+final _searchController;
   OutlineInputBorder inputBorder = OutlineInputBorder(
     borderSide: const BorderSide(width: 1.0),
     borderRadius: BorderRadius.circular(25.0),
