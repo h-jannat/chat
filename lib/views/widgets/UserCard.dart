@@ -1,9 +1,13 @@
+import 'package:chat/models/User.dart';
+import 'package:chat/utilities/database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class UserCard extends StatelessWidget {
   UserCard(this._username, this._email);
   final _username;
   final _email;
+  final _databaseController = Get.put(DatabaseController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,7 +24,15 @@ class UserCard extends StatelessWidget {
               Text(_email),
             ],
           ),
-          ElevatedButton(onPressed: () {}, child: Text("Message"))
+          ElevatedButton(
+              onPressed: () {
+                _databaseController.createChatRoom(_email);
+                print("arguments");
+                print( {"username": _username, "email": _email});
+                Navigator.pushNamed(context, "/chat",
+                    arguments: User( _username, _email),);
+              },
+              child: Text("Message"))
         ],
       ),
       decoration: BoxDecoration(

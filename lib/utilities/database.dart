@@ -19,14 +19,25 @@ class DatabaseController extends LoginController {
     FirebaseFirestore.instance.collection("users").add(userData);
   }
 
+  _generateChatRoomId(List names) {
+    names.sort((a, b) => a.compareTo(b));
+    return names.reduce((value, element) => value + '-' + element);
+  }
+
   createChatRoom(String targetUserEmail) {
-    try{
+    try {
+      String id = _generateChatRoomId([user.email, targetUserEmail]);
+      Map<String, dynamic> data = {
+        "users": [user.email, targetUserEmail],
+        "chatRoomId": user.email + "-" + targetUserEmail
+      };
       //FirebaseFirestore.instance.collection("chat-rooms").document(id).setData(data).catch(err=>print(err))
-    FirebaseFirestore.instance.collection("chat-rooms").add({
-      "users": [user.email, targetUserEmail],
-      "chatRoomId": user.email + "-" + targetUserEmail
-    });
-    }catch(e){
+      FirebaseFirestore.instance
+          .collection("chat-rooms")
+          .doc(id)
+          .set(data)
+          .catchError((e) => print(e));
+    } catch (e) {
       print(e);
     }
   }

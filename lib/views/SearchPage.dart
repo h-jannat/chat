@@ -20,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   final _databaseController = Get.put(DatabaseController());
   TextEditingController _searchController = TextEditingController(text: "");
   List<Map> _users =[];
+  
   onSearch(username) async {
     List<Map> result = await _databaseController.getUserByUsername(username);
     print(result);
