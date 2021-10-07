@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   List<Map> _users =[];
   
   onSearch(username) async {
-    List<Map> result = await _databaseController.getUserByUsername(username);
+    List<Map> result = await _databaseController.getUsersByUsername(username);
     print(result);
     setState(() {
       _users=result;

@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Chat App',
         debugShowCheckedModeBanner: false,
+        
         theme: ThemeData(
             textTheme: TextTheme(
               bodyText1: TextStyle(),
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
             print(settings.arguments);
             // Cast the arguments to the correct
             // type: ScreenArguments.
-            final args = settings.arguments as User;
+            final args = settings.arguments as UserModel;
             print("user");
             
             print(args);

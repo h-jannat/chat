@@ -1,3 +1,4 @@
+import 'package:chat/utilities/database.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,6 +19,7 @@ class _SignInPageState extends State<SignInPage> {
   bool _isObscure = true;
   bool _saveLogin = false;
   final _loginController = Get.put(LoginController());
+  final _databaseController = Get.put(DatabaseController());
   final storage = new FlutterSecureStorage();
   //border styles
   Future getStoredInfo() async {
@@ -50,6 +52,7 @@ class _SignInPageState extends State<SignInPage> {
       } else {
         Navigator.pushReplacementNamed(context, "/varify");
       }
+      await _databaseController.getUserByEmail();
     } else {
       setState(() {
         _error = true;

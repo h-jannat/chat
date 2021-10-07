@@ -1,9 +1,15 @@
+import 'package:chat/models/Message.dart';
+import 'package:chat/models/User.dart';
 import 'package:chat/utilities/signIn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class DatabaseController extends LoginController {
-  getUserByUsername(String term) async {
+  String _chatRoomId = "";
+  List<Message> _messages = [];
+  get messages => _messages;
+  UserModel _currentUser = UserModel(username: "", email: "", photoURL: "");
+  getUsersByUsername(String term) async {
     final result = await FirebaseFirestore.instance
         .collection("users")
         .where('name', isGreaterThanOrEqualTo: term)
@@ -15,6 +21,19 @@ class DatabaseController extends LoginController {
     return users;
   }
 
+  getUserByEmail() async {
+    final result = await FirebaseFirestore.instance
+        .collection("users")
+        .where('email', isEqualTo: user.email)
+        .get();
+    print("get user");
+    List<Map> currentUserList = result.docs.map((doc) => doc.data()).toList();
+    _currentUser = UserModel(
+        username: currentUserList[0]["name"],
+        email: currentUserList[0]["email"],
+        photoURL: currentUserList[0]["photoURL"] ?? "");
+  }
+get currentUser => _currentUser;
   uploadUserData(userData) {
     FirebaseFirestore.instance.collection("users").add(userData);
   }
@@ -26,7 +45,8 @@ class DatabaseController extends LoginController {
 
   createChatRoom(String targetUserEmail) {
     try {
-      String id = _generateChatRoomId([user.email, targetUserEmail]);
+      _chatRoomId = _generateChatRoomId([user.email, targetUserEmail]);
+
       Map<String, dynamic> data = {
         "users": [user.email, targetUserEmail],
         "chatRoomId": user.email + "-" + targetUserEmail
@@ -34,11 +54,36 @@ class DatabaseController extends LoginController {
       //FirebaseFirestore.instance.collection("chat-rooms").document(id).setData(data).catch(err=>print(err))
       FirebaseFirestore.instance
           .collection("chat-rooms")
-          .doc(id)
+          .doc(_chatRoomId)
           .set(data)
           .catchError((e) => print(e));
     } catch (e) {
       print(e);
     }
+  }
+
+  sendMessage(String message) {
+    FirebaseFirestore.instance
+        .collection("chat-rooms")
+        .doc(_chatRoomId)
+        .collection("chat")
+        .add({"message": message, "sender": user.email}).catchError(
+            (e) => print(e));
+  }
+
+  getConversationMessages() async {
+    final messagesSnaps = await FirebaseFirestore.instance
+        .collection("chat-rooms")
+        .doc(_chatRoomId)
+        .collection("chat")
+        .get()
+        .catchError((e) => print(e));
+
+    _messages = messagesSnaps.docs
+        .map((doc) => Message(
+            message: doc.data()["message"], sender: doc.data()["sender"]))
+        .toList();
+
+    print(_messages);
   }
 }

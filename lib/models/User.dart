@@ -1,5 +1,6 @@
-class User {
+class UserModel {
   final String username;
   final String email;
-  User(this.username, this.email);
+  final String photoURL;
+  UserModel({required this.username, required this.email, required this.photoURL});
 }

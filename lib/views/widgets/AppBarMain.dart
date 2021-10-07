@@ -27,7 +27,7 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget{
           return GestureDetector(
             child: CircleAvatar(
                 backgroundColor: Colors.white,
-                backgroundImage: _loginController.user.photoURL != null
+                backgroundImage: _loginController.user.photoURL != null && _loginController.user.photoURL != ""
                     ? NetworkImage(_loginController.user.photoURL)
                     : AssetImage(
                         "assets/images/user.png",

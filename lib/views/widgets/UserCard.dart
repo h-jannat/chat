@@ -30,7 +30,7 @@ class UserCard extends StatelessWidget {
                 print("arguments");
                 print( {"username": _username, "email": _email});
                 Navigator.pushNamed(context, "/chat",
-                    arguments: User( _username, _email),);
+                    arguments: UserModel( username:_username, email:_email, photoURL: ""),);
               },
               child: Text("Message"))
         ],
