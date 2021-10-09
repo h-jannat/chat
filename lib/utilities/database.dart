@@ -33,7 +33,8 @@ class DatabaseController extends LoginController {
         email: currentUserList[0]["email"],
         photoURL: currentUserList[0]["photoURL"] ?? "");
   }
-get currentUser => _currentUser;
+
+  get currentUser => _currentUser;
   uploadUserData(userData) {
     FirebaseFirestore.instance.collection("users").add(userData);
   }
@@ -67,8 +68,11 @@ get currentUser => _currentUser;
         .collection("chat-rooms")
         .doc(_chatRoomId)
         .collection("chat")
-        .add({"message": message, "sender": user.email}).catchError(
-            (e) => print(e));
+        .add({
+      "message": message,
+      "sender": user.email,
+      "time": Timestamp.now()
+    }).catchError((e) => print(e));
   }
 
   getConversationMessages() async {
@@ -76,14 +80,27 @@ get currentUser => _currentUser;
         .collection("chat-rooms")
         .doc(_chatRoomId)
         .collection("chat")
+        .orderBy("time")
         .get()
         .catchError((e) => print(e));
 
     _messages = messagesSnaps.docs
-        .map((doc) => Message(
-            message: doc.data()["message"], sender: doc.data()["sender"]))
+        .map(
+          (doc) => Message(
+              message: doc.data()["message"],
+              sender: doc.data()["sender"],
+              time: doc.data()["time"]),
+        )
         .toList();
 
     print(_messages);
   }
+
+ 
+Stream<QuerySnapshot> getMessagesStream(){
+  return FirebaseFirestore.instance
+        .collection("chat-rooms").snapshots();
+}
+
+
 }

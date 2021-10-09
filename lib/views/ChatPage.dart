@@ -5,6 +5,7 @@ import 'package:chat/models/Message.dart';
 import 'package:chat/models/User.dart';
 import 'package:chat/utilities/database.dart';
 import 'package:chat/views/widgets/AppBarMain.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final _databaseController = Get.put(DatabaseController());
   List<Message> messages = [];
   final _messageController = TextEditingController(text: "");
-  UserModel _currentUser = UserModel(username: "", email: "", photoURL: "");
+  bool _isActiveSendBtn = false;
   List infoHead = [];
   final _scrollListControler = ScrollController();
   getMessages() async {
@@ -33,14 +34,10 @@ class _ChatPageState extends State<ChatPage> {
   getInitData() async {
     await getMessages();
 
-    setState(() {
-      _currentUser = _databaseController.currentUser;
-      infoHead = [
-        Text(widget.targetUserInfo.username),
-        Text(widget.targetUserInfo.email),
-        Text(_currentUser.username),
-      ];
-    });
+    infoHead = [
+      Text(widget.targetUserInfo.username),
+      Text(widget.targetUserInfo.email),
+    ];
   }
 
   @override
@@ -52,9 +49,11 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   _send() async {
-    if(_messageController.text !=""){
-    _databaseController.sendMessage(_messageController.text);
-    await getMessages();}
+    if (_messageController.text != "") {
+      _databaseController.sendMessage(_messageController.text);
+      await getMessages();
+      _messageController.text = "";
+    }
   }
 
   @override
@@ -79,20 +78,62 @@ class _ChatPageState extends State<ChatPage> {
                 height: height,
                 width: width,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: height - 200,
-                        child: ListView.builder(
-                            controller: _scrollListControler,
-                            itemCount: messages.length + 3,
-                            itemBuilder: (context, index) {
-                              if (index < 3) {
-                                return infoHead[index];
-                              } else {
-                                bool isCurrentUser = _currentUser.email ==
-                                    messages[index - 3].sender;
-                                return Align(
+                  child: Column(children: [
+                    Container(
+                      height: height - 200,
+                      // child: ListView.builder(
+                      //     controller: _scrollListControler,
+                      //     itemCount: messages.length + 2,
+                      //     itemBuilder: (context, index) {
+                      //       if (index < 2) {
+                      //         return infoHead[index];
+                      //       } else {
+                      //         print("current");
+                      //         print(_databaseController.user.email);
+
+                      //         bool isCurrentUser =
+                      //             _databaseController.user.email ==
+                      //                 messages[index - 2].sender;
+                      //         print(messages[index - 2].sender);
+                      //         return Align(
+                      //             alignment: isCurrentUser
+                      //                 ? Alignment.centerRight
+                      //                 : Alignment.centerLeft,
+                      //             child: Container(
+                      //               margin: EdgeInsets.symmetric(
+                      //                   horizontal: 10, vertical: 5),
+                      //               padding: EdgeInsets.all(10),
+                      //               decoration: BoxDecoration(
+                      //                 color: isCurrentUser
+                      //                     ? ctmColor(2)
+                      //                     : ctmColor(3),
+                      //               ),
+                      //               child: Text(
+                      //                 messages[index - 2].message,
+                      //                 style: TextStyle(
+                      //                   color: Colors.white,
+                      //                   fontSize: 20,
+                      //                 ),
+                      //               ),
+                      //             ));
+                      //       }
+                      //     }),
+
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: _databaseController.getMessagesStream(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (!snapshot.hasData)
+                              return new Text('Loading...');
+                            return ListView.builder(
+                                controller: _scrollListControler,
+                                itemCount: snapshot.data?.docs.length,
+                                itemBuilder: (context, index) {
+                                  bool isCurrentUser =
+                                      _databaseController.user.email ==
+                                          snapshot.data?.docs[index];
+                                  print(snapshot.data?.docs[index]);
+                                  return Align(
                                     alignment: isCurrentUser
                                         ? Alignment.centerRight
                                         : Alignment.centerLeft,
@@ -106,24 +147,24 @@ class _ChatPageState extends State<ChatPage> {
                                             : ctmColor(3),
                                       ),
                                       child: Text(
-                                        messages[index - 3].message,
+                                        messages[index - 2].message,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
                                         ),
                                       ),
-                                    ));
-                              }
-                            }),
-                      )
-                    ],
-                  ),
+                                    ),
+                                  );
+                                });
+                          }),
+                    ),
+                  ]),
                 ),
               ),
               Container(
                 // padding: EdgeInsets.symmetric(horizontal: 10),
                 alignment: Alignment.center,
-                color: Colors.white70,
+                color: Colors.white,
                 height: 100,
                 width: width,
                 child:
@@ -133,6 +174,9 @@ class _ChatPageState extends State<ChatPage> {
                     height: 100,
                     child: TextField(
                       controller: _messageController,
+                      onChanged: (text) => setState(() {
+                        _isActiveSendBtn = text != "";
+                      }),
                       keyboardType: TextInputType.multiline,
                       minLines: 1,
                       maxLines: 5,
@@ -145,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
                     padding: EdgeInsets.only(left: 10, bottom: 10),
                     child: IconButton(
                       icon: Icon(Icons.send),
-                      onPressed: _send,
+                      onPressed: _isActiveSendBtn ? _send : null,
                     ),
                   ),
                 ]),
