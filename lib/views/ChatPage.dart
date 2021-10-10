@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:chat/colors.dart';
 import 'package:chat/models/Message.dart';
 import 'package:chat/models/User.dart';
@@ -23,17 +22,10 @@ class _ChatPageState extends State<ChatPage> {
   final _messageController = TextEditingController(text: "");
   bool _isActiveSendBtn = false;
   List infoHead = [];
-  final _scrollListControler = ScrollController();
-  getMessages() async {
-    await _databaseController.getConversationMessages();
-    setState(() {
-      messages = _databaseController.messages;
-    });
-  }
+  final _scrollListController = ScrollController();
+  int allMessagesSize = 10;
 
-  getInitData() async {
-    await getMessages();
-
+  getInitData() {
     infoHead = [
       Text(widget.targetUserInfo.username),
       Text(widget.targetUserInfo.email),
@@ -46,26 +38,61 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
 
     getInitData();
+
+    _scrollListController.addListener(() {
+      if (_scrollListController.position.atEdge) {
+        if (_scrollListController.position.pixels == 0) {
+          print("get more messages");
+          _databaseController.increaseShownMessages();
+          setState(() {
+            allMessagesSize = _databaseController.shownMessagesCount;
+          });
+        }
+      }
+    });
   }
 
   _send() async {
     if (_messageController.text != "") {
       _databaseController.sendMessage(_messageController.text);
-      await getMessages();
+
       _messageController.text = "";
     }
+  }
+
+  Widget message(messageMap) {
+    bool isCurrentUser = _databaseController.user.email == messageMap["sender"];
+
+    return Align(
+      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isCurrentUser ? ctmColor(2) : ctmColor(3),
+        ),
+        child: Text(
+          messageMap["message"],
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
-    Timer(
-      Duration(seconds: 1),
-      () => _scrollListControler
-          .jumpTo(_scrollListControler.position.maxScrollExtent),
-    );
+    if (allMessagesSize == 10) {
+      Timer(
+        Duration(seconds: 1),
+        () => _scrollListController
+            .jumpTo(_scrollListController.position.maxScrollExtent),
+      );
+    }
     return Scaffold(
       appBar: AppBarMain(),
       body: Container(
@@ -81,81 +108,26 @@ class _ChatPageState extends State<ChatPage> {
                   child: Column(children: [
                     Container(
                       height: height - 200,
-                      // child: ListView.builder(
-                      //     controller: _scrollListControler,
-                      //     itemCount: messages.length + 2,
-                      //     itemBuilder: (context, index) {
-                      //       if (index < 2) {
-                      //         return infoHead[index];
-                      //       } else {
-                      //         print("current");
-                      //         print(_databaseController.user.email);
-
-                      //         bool isCurrentUser =
-                      //             _databaseController.user.email ==
-                      //                 messages[index - 2].sender;
-                      //         print(messages[index - 2].sender);
-                      //         return Align(
-                      //             alignment: isCurrentUser
-                      //                 ? Alignment.centerRight
-                      //                 : Alignment.centerLeft,
-                      //             child: Container(
-                      //               margin: EdgeInsets.symmetric(
-                      //                   horizontal: 10, vertical: 5),
-                      //               padding: EdgeInsets.all(10),
-                      //               decoration: BoxDecoration(
-                      //                 color: isCurrentUser
-                      //                     ? ctmColor(2)
-                      //                     : ctmColor(3),
-                      //               ),
-                      //               child: Text(
-                      //                 messages[index - 2].message,
-                      //                 style: TextStyle(
-                      //                   color: Colors.white,
-                      //                   fontSize: 20,
-                      //                 ),
-                      //               ),
-                      //             ));
-                      //       }
-                      //     }),
-
                       child: StreamBuilder<QuerySnapshot>(
-                          stream: _databaseController.getMessagesStream(),
+                          stream: _databaseController
+                              .getMessagesStream(allMessagesSize),
                           builder: (BuildContext context,
                               AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (!snapshot.hasData)
                               return new Text('Loading...');
-                            return ListView.builder(
-                                controller: _scrollListControler,
-                                itemCount: snapshot.data?.docs.length,
-                                itemBuilder: (context, index) {
-                                  bool isCurrentUser =
-                                      _databaseController.user.email ==
-                                          snapshot.data?.docs[index];
-                                  print(snapshot.data?.docs[index]);
-                                  return Align(
-                                    alignment: isCurrentUser
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: isCurrentUser
-                                            ? ctmColor(2)
-                                            : ctmColor(3),
-                                      ),
-                                      child: Text(
-                                        messages[index - 2].message,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                });
+                            {
+                              return ListView(
+                                  controller: _scrollListController,
+                                  children: snapshot.data!.docs
+                                      .map((DocumentSnapshot document) {
+                                    // print(document.metadata.isFromCache
+                                    //     ? "From cache"
+                                    //     : "from network");
+                                    Map<String, dynamic> data =
+                                        document.data() as Map<String, dynamic>;
+                                    return message(data);
+                                  }).toList());
+                            }
                           }),
                     ),
                   ]),

@@ -6,9 +6,19 @@ import 'package:get/get.dart';
 
 class DatabaseController extends LoginController {
   String _chatRoomId = "";
+  int _shownMessagesCount = 10;
   List<Message> _messages = [];
+
   get messages => _messages;
+
   UserModel _currentUser = UserModel(username: "", email: "", photoURL: "");
+
+get shownMessagesCount => _shownMessagesCount;
+
+  void increaseShownMessages() {
+    _shownMessagesCount += 10;
+  }
+
   getUsersByUsername(String term) async {
     final result = await FirebaseFirestore.instance
         .collection("users")
@@ -63,7 +73,7 @@ class DatabaseController extends LoginController {
     }
   }
 
-  sendMessage(String message) {
+  sendMessage(String message) async {
     FirebaseFirestore.instance
         .collection("chat-rooms")
         .doc(_chatRoomId)
@@ -73,6 +83,10 @@ class DatabaseController extends LoginController {
       "sender": user.email,
       "time": Timestamp.now()
     }).catchError((e) => print(e));
+    FirebaseFirestore.instance
+        .collection("chat-rooms")
+        .doc(_chatRoomId)
+        .update({"chatLength": FieldValue.increment(1)});
   }
 
   getConversationMessages() async {
@@ -96,11 +110,13 @@ class DatabaseController extends LoginController {
     print(_messages);
   }
 
- 
-Stream<QuerySnapshot> getMessagesStream(){
-  return FirebaseFirestore.instance
-        .collection("chat-rooms").snapshots();
-}
-
-
+  Stream<QuerySnapshot> getMessagesStream(int allMessagesSize) {
+    return FirebaseFirestore.instance
+        .collection("chat-rooms")
+        .doc(_chatRoomId)
+        .collection("chat")
+        .orderBy("time")
+        .limit(_shownMessagesCount)
+        .snapshots();
+  }
 }
