@@ -70,6 +70,12 @@ class _ChatPageState extends State<ChatPage> {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isCurrentUser ? ctmColor(2) : ctmColor(3),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(8.0),
+                bottomRight: Radius.circular(8.0),
+                topLeft: isCurrentUser? Radius.circular(8.0) : Radius.zero,
+                topRight: isCurrentUser? Radius.zero : Radius.circular(8.0),
+              ),
         ),
         child: Text(
           messageMap["message"],
@@ -94,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
       );
     }
     return Scaffold(
-      appBar: AppBarMain(),
+      appBar: AppBar(title: Text(widget.targetUserInfo.username),),
       body: Container(
           height: height,
           child: Stack(

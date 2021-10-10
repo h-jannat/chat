@@ -13,7 +13,7 @@ class DatabaseController extends LoginController {
 
   UserModel _currentUser = UserModel(username: "", email: "", photoURL: "");
 
-get shownMessagesCount => _shownMessagesCount;
+  get shownMessagesCount => _shownMessagesCount;
 
   void increaseShownMessages() {
     _shownMessagesCount += 10;
@@ -59,6 +59,7 @@ get shownMessagesCount => _shownMessagesCount;
       _chatRoomId = _generateChatRoomId([user.email, targetUserEmail]);
 
       Map<String, dynamic> data = {
+        "time": Timestamp.now(),
         "users": [user.email, targetUserEmail],
         "chatRoomId": user.email + "-" + targetUserEmail
       };
@@ -87,6 +88,15 @@ get shownMessagesCount => _shownMessagesCount;
         .collection("chat-rooms")
         .doc(_chatRoomId)
         .update({"chatLength": FieldValue.increment(1)});
+  }
+
+  Stream<QuerySnapshot> getUserChatRooms(int size) {
+    return FirebaseFirestore.instance
+        .collection("chat-rooms")
+        .where('users', arrayContains: user.email)
+       //.orderBy("time", descending: true)
+          .snapshots();
+        
   }
 
   getConversationMessages() async {
