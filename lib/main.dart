@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Chat App',
         debugShowCheckedModeBanner: false,
-        
         theme: ThemeData(
             textTheme: TextTheme(
               bodyText1: TextStyle(),
@@ -34,9 +33,9 @@ class MyApp extends StatelessWidget {
               bodyColor: Colors.grey[800],
               displayColor: Colors.blue,
             ),
-            primarySwatch: ctmMaterialColor(0),
+            primarySwatch: ctmMaterialColor(3),
             bottomAppBarColor: ctmMaterialColor(3),
-            accentColor: ctmMaterialColor(2),
+            accentColor: ctmMaterialColor(0),
             buttonTheme: ButtonThemeData(
               buttonColor: ctmColor(2), //  <-- dark color
               textTheme: ButtonTextTheme
@@ -59,7 +58,7 @@ class MyApp extends StatelessWidget {
             // type: ScreenArguments.
             final args = settings.arguments as UserModel;
             print("user");
-            
+
             print(args);
             // Then, extract the required data from
             // the arguments and pass the data to the
