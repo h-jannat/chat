@@ -3,7 +3,7 @@ import 'package:chat/colors.dart';
 import 'package:chat/models/Message.dart';
 import 'package:chat/models/User.dart';
 import 'package:chat/utilities/database.dart';
-import 'package:chat/views/widgets/AppBarMain.dart';
+import 'package:chat/widgets/AppBarMain.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,9 +34,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     getInitData();
 
     _scrollListController.addListener(() {
@@ -69,13 +67,13 @@ class _ChatPageState extends State<ChatPage> {
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isCurrentUser ? ctmColor(2) : ctmColor(3),
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8.0),
-                bottomRight: Radius.circular(8.0),
-                topLeft: isCurrentUser? Radius.circular(8.0) : Radius.zero,
-                topRight: isCurrentUser? Radius.zero : Radius.circular(8.0),
-              ),
+          color: isCurrentUser ? ctmColor(2) : ctmColor(0),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(8.0),
+            bottomRight: Radius.circular(8.0),
+            topLeft: isCurrentUser ? Radius.circular(8.0) : Radius.zero,
+            topRight: isCurrentUser ? Radius.zero : Radius.circular(8.0),
+          ),
         ),
         child: Text(
           messageMap["message"],
@@ -100,7 +98,9 @@ class _ChatPageState extends State<ChatPage> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text(widget.targetUserInfo.username),),
+      appBar: AppBar(
+        title: Text(widget.targetUserInfo.username),
+      ),
       body: Container(
           height: height,
           child: Stack(

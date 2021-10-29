@@ -27,6 +27,7 @@ class DatabaseController extends LoginController {
         .get();
     print("search in users");
     List<Map> users = result.docs.map((doc) => doc.data()).toList();
+    users.removeWhere((element) => element["email"] == user.email);
     print(users);
     return users;
   }
@@ -54,14 +55,16 @@ class DatabaseController extends LoginController {
     return names.reduce((value, element) => value + '-' + element);
   }
 
-  createChatRoom(String targetUserEmail) {
+  createChatRoom(String targetUserName, String targetUserEmail) {
     try {
       _chatRoomId = _generateChatRoomId([user.email, targetUserEmail]);
-
+      print("creat room");
+      print(currentUser);
       Map<String, dynamic> data = {
         "time": Timestamp.now(),
-        "users": [user.email, targetUserEmail],
-        "chatRoomId": user.email + "-" + targetUserEmail
+        "names": [currentUser.username, targetUserName],
+        "emails": [currentUser.email, targetUserEmail],
+        "chatRoomId": currentUser.email + "-" + targetUserEmail
       };
       //FirebaseFirestore.instance.collection("chat-rooms").document(id).setData(data).catch(err=>print(err))
       FirebaseFirestore.instance
@@ -91,12 +94,13 @@ class DatabaseController extends LoginController {
   }
 
   Stream<QuerySnapshot> getUserChatRooms(int size) {
+    print("get rooms");
+    print(user);
     return FirebaseFirestore.instance
         .collection("chat-rooms")
-        .where('users', arrayContains: user.email)
-       //.orderBy("time", descending: true)
-          .snapshots();
-        
+        .where('emails', arrayContains: currentUser.email)
+        //   .orderBy("time", descending: true)
+        .snapshots();
   }
 
   getConversationMessages() async {

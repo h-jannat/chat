@@ -1,7 +1,7 @@
 import 'package:chat/utilities/database.dart';
 import 'package:chat/views/HomePage.dart';
 import 'package:chat/views/SignInPage.dart';
-import 'package:chat/views/widgets/AppBarMain.dart';
+import 'package:chat/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../colors.dart';

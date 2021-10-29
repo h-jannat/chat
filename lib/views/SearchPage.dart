@@ -1,9 +1,9 @@
 import 'package:chat/utilities/database.dart';
 import 'package:chat/utilities/signIn.dart';
-import 'package:chat/views/widgets/AppBarMain.dart';
-import 'package:chat/views/widgets/Drawer.dart';
-import 'package:chat/views/widgets/SearchBox.dart';
-import 'package:chat/views/widgets/UserCard.dart';
+import 'package:chat/widgets/AppBarMain.dart';
+import 'package:chat/widgets/Drawer.dart';
+import 'package:chat/widgets/SearchBox.dart';
+import 'package:chat/widgets/UserCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,15 +19,15 @@ class _SearchPageState extends State<SearchPage> {
   final _loginController = Get.put(LoginController());
   final _databaseController = Get.put(DatabaseController());
   TextEditingController _searchController = TextEditingController(text: "");
-  List<Map> _users =[];
-  
+  List<Map> _users = [];
+
   onSearch(username) async {
     List<Map> result = await _databaseController.getUsersByUsername(username);
     print(result);
     setState(() {
-      _users=result;
+      _users = result;
+      print(_users);
     });
-    
   }
 
   @override
@@ -48,8 +48,8 @@ class _SearchPageState extends State<SearchPage> {
                 alignment: Alignment.center,
                 child: ListView.builder(
                   itemCount: _users.length,
-                  itemBuilder: (context, index) => UserCard(
-                      _users[index]["name"], _users[index]["email"]),
+                  itemBuilder: (context, index) =>
+                      UserCard(_users[index]["name"], _users[index]["email"]),
                 ),
               )
             ],

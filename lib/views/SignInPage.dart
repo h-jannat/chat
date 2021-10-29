@@ -1,5 +1,4 @@
 import 'package:chat/utilities/database.dart';
-import 'package:chat/views/widgets/AppBarMain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -46,9 +45,7 @@ class _SignInPageState extends State<SignInPage> {
       await _loginController.isVarifiredEmailFetch();
       if (_loginController.isVarifiredEmail) {
         storage.write(key: 'isLoggedIn', value: "true");
-        Navigator.pushReplacementNamed(
-          context, "/home"
-        );
+        Navigator.pushReplacementNamed(context, "/home");
       } else {
         Navigator.pushReplacementNamed(context, "/varify");
       }
@@ -80,7 +77,6 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.only(top: 100, left: 50, right: 50),
@@ -194,7 +190,8 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     Text("Not registered yet?"),
                     TextButton(
-                      onPressed: () => Navigator.pushReplacementNamed(context, "/signUp"),
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, "/signUp"),
                       child: Text("SIGN UP"),
                     ),
                   ],

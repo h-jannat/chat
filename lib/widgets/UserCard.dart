@@ -1,5 +1,6 @@
 import 'package:chat/models/User.dart';
 import 'package:chat/utilities/database.dart';
+import 'package:chat/widgets/ProfilePhoto.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,7 @@ class UserCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          ProfilePhoto(null),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -26,11 +28,15 @@ class UserCard extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                _databaseController.createChatRoom(_email);
+                _databaseController.createChatRoom(_username, _email);
                 print("arguments");
-                print( {"username": _username, "email": _email});
-                Navigator.pushNamed(context, "/chat",
-                    arguments: UserModel( username:_username, email:_email, photoURL: ""),);
+                print({"username": _username, "email": _email});
+                Navigator.pushNamed(
+                  context,
+                  "/chat",
+                  arguments: UserModel(
+                      username: _username, email: _email, photoURL: ""),
+                );
               },
               child: Text("Message"))
         ],
