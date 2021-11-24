@@ -3,7 +3,7 @@ import 'package:chat/colors.dart';
 import 'package:chat/models/Message.dart';
 import 'package:chat/models/User.dart';
 import 'package:chat/utilities/database.dart';
-import 'package:chat/widgets/AppBarMain.dart';
+import 'package:chat/widgets/MessageItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,34 +58,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Widget message(messageMap) {
-    bool isCurrentUser = _databaseController.user.email == messageMap["sender"];
-
-    return Align(
-      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: isCurrentUser ? ctmColor(2) : ctmColor(0),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(8.0),
-            bottomRight: Radius.circular(8.0),
-            topLeft: isCurrentUser ? Radius.circular(8.0) : Radius.zero,
-            topRight: isCurrentUser ? Radius.zero : Radius.circular(8.0),
-          ),
-        ),
-        child: Text(
-          messageMap["message"],
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -124,14 +96,14 @@ class _ChatPageState extends State<ChatPage> {
                             {
                               return ListView(
                                   controller: _scrollListController,
-                                  children: snapshot.data!.docs
-                                      .map((DocumentSnapshot document) {
-                                    // print(document.metadata.isFromCache
-                                    //     ? "From cache"
-                                    //     : "from network");
+                                  children: snapshot.data!.docs.map((
+                                    DocumentSnapshot document,
+                                  ) {
                                     Map<String, dynamic> data =
                                         document.data() as Map<String, dynamic>;
-                                    return message(data);
+                                    return MessageItem(
+                                      data,
+                                    );
                                   }).toList());
                             }
                           }),
