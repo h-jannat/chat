@@ -18,7 +18,7 @@ class UserCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ProfilePhoto(null),
+          ProfilePhoto(null, 20),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

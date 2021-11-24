@@ -22,7 +22,7 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget {
         ),
         Builder(builder: (context) {
           return GestureDetector(
-            child: ProfilePhoto(_loginController.user.photoURL),
+            child: ProfilePhoto(_loginController.user.photoURL, 20),
             onTap: () {
               Scaffold.of(context).openEndDrawer();
             },
