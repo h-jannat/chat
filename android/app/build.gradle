@@ -38,6 +38,7 @@ android {
         applicationId "com.example.chat"
         minSdkVersion 21
         targetSdkVersion 30
+        multiDexEnabled true 
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -62,6 +63,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.firebase:firebase-dynamic-links'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
 
 }

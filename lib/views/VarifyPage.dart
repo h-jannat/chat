@@ -12,14 +12,16 @@ class VarifyPage extends StatefulWidget {
 class _VarifyPageState extends State<VarifyPage> {
   final _loginController = Get.put(LoginController());
   Timer? _timer;
+  bool isActiveBtn = true;
   @override
   void initState() {
-  
     super.initState();
   }
-  void varify(){
-      _loginController.varifyEmail();
+
+  void varify() {
+    _loginController.varifyEmail();
     _timer = Timer.periodic(Duration(seconds: 10), (_timer) async {
+      print("timer");
       await _loginController.isVarifiredEmailFetch();
       if (_loginController.isVarifiredEmail) {
         _timer.cancel();
@@ -27,18 +29,21 @@ class _VarifyPageState extends State<VarifyPage> {
       }
     });
   }
-@override
-void dispose(){
-  _timer?.cancel();
-  super.dispose();
-}
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         alignment: Alignment.center,
-        child: ElevatedButton(onPressed: varify, child: Text("Send varification link")),
+        child: ElevatedButton(
+            onPressed: isActiveBtn ? varify : null,
+            child: Text("Send varification link")),
       ),
     );
   }
 }
-

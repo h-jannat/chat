@@ -1,3 +1,4 @@
+import 'package:chat/utilities/database.dart';
 import 'package:chat/utilities/signIn.dart';
 import 'package:chat/widgets/ProfilePhoto.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 class AppBarMain extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     final _loginController = Get.put(LoginController());
+    final _databaseController = Get.put(DatabaseController());
     void _logOut(BuildContext context) async {
       await _loginController.signOut();
       Navigator.pushReplacementNamed(context, "/signIn");
@@ -22,7 +24,7 @@ class AppBarMain extends StatelessWidget with PreferredSizeWidget {
         ),
         Builder(builder: (context) {
           return GestureDetector(
-            child: ProfilePhoto(_loginController.user.photoURL, 20),
+            child: ProfilePhoto(_databaseController.currentUser.photoURL, 20),
             onTap: () {
               Scaffold.of(context).openEndDrawer();
             },

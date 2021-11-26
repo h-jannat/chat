@@ -1,8 +1,8 @@
 import 'package:chat/utilities/database.dart';
+import 'package:chat/widgets/GoogleSignInBtn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import '../colors.dart';
 import '../utilities/signIn.dart';
 
 class SignInPage extends StatefulWidget {
@@ -40,16 +40,10 @@ class _SignInPageState extends State<SignInPage> {
     print(_saveLogin);
   }
 
-  void runAfterSignIn() async {
+  void runAfterSignIn() {
+    print("run after");
     if (_loginController.user != null) {
-      await _loginController.isVarifiredEmailFetch();
-      if (_loginController.isVarifiredEmail) {
-        storage.write(key: 'isLoggedIn', value: "true");
-        Navigator.pushReplacementNamed(context, "/home");
-      } else {
-        Navigator.pushReplacementNamed(context, "/varify");
-      }
-      await _databaseController.getUserByEmail();
+      Navigator.pushReplacementNamed(context, "/home");
     } else {
       setState(() {
         _error = true;
@@ -58,15 +52,10 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void _signIn(context) async {
+    print("emailll");
     await _loginController.signInEmailPass(
         _usernameController.text, _passwordController.text);
 
-    runAfterSignIn();
-  }
-
-  void _googleSignIn(context) async {
-    print("google");
-    await _loginController.googleSignIn();
     runAfterSignIn();
   }
 
@@ -114,13 +103,6 @@ class _SignInPageState extends State<SignInPage> {
                             _isObscure = !_isObscure;
                           });
                         }),
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => {},
-                    child: Text("Forget password?"),
                   ),
                 ),
                 Row(
@@ -171,17 +153,7 @@ class _SignInPageState extends State<SignInPage> {
                 SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
-                  child: Text("SIGN IN WITH GOOGLE"),
-                  onPressed: () => _googleSignIn(context),
-                  style: ElevatedButton.styleFrom(
-                    primary: ctmColor(2),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25)),
-                    minimumSize: Size(double.infinity,
-                        50), // double.infinity is the width and 30 is the height
-                  ),
-                ),
+                GoogleSignInBtn(),
                 SizedBox(
                   height: 25,
                 ),

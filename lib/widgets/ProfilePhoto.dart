@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ProfilePhoto extends StatelessWidget {
-  ProfilePhoto(this.photoURL, this.radius);
-  final photoURL;
   final double radius;
+  final String url;
+  ProfilePhoto(this.url, this.radius);
+
   Widget build(BuildContext context) {
     return CircleAvatar(
         radius: radius,
         backgroundColor: Colors.white,
-        backgroundImage: photoURL != null && photoURL != ""
-            ? NetworkImage(photoURL)
+        backgroundImage: url != ""
+            ? NetworkImage(url)
             : AssetImage(
                 "assets/images/user.png",
               ) as ImageProvider);

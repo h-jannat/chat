@@ -1,14 +1,33 @@
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:chat/utilities/database.dart';
 import 'package:chat/widgets/ProfilePhoto.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../colors.dart';
 
 class SideDrawer extends StatelessWidget {
-  SideDrawer(this._loginController);
-  final _loginController;
   final _databaseController = Get.put(DatabaseController());
+  Future selectFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+      if (result == null) return;
+      final path = result.files.single.path;
+      if (path == null) return;
+      File file = File(path);
+      final String fileName =
+          "${_databaseController.currentUser.username}-profile-photo";
+      final destination = 'profileImages/$fileName';
+      await _databaseController.uploadFile(destination, file);
+      await _databaseController.setUserPhotoURL();
+      await _databaseController.getUserByEmail();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -21,7 +40,7 @@ class SideDrawer extends StatelessWidget {
             ),
             child: Column(
               children: [
-                ProfilePhoto('', 50),
+                ProfilePhoto(_databaseController.currentUser.photoURL, 50),
                 Text(
                   _databaseController.currentUser.username,
                   style: TextStyle(fontSize: 17),
@@ -50,7 +69,7 @@ class SideDrawer extends StatelessWidget {
                   },
                 ),
                 OutlinedButton(
-                    child: Text("Edit profile photo"), onPressed: () => {})
+                    child: Text("Edit profile photo"), onPressed: selectFile)
               ],
             ),
           )

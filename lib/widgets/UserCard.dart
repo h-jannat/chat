@@ -18,7 +18,7 @@ class UserCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ProfilePhoto(null, 20),
+          ProfilePhoto(_databaseController.currentUser.photoURL, 20),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

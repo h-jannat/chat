@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:chat/models/Message.dart';
 import 'package:chat/models/User.dart';
 import 'package:chat/utilities/signIn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class DatabaseController extends LoginController {
   String _chatRoomId = "";
@@ -33,22 +35,30 @@ class DatabaseController extends LoginController {
   }
 
   getUserByEmail() async {
+    print("get user by email");
     final result = await FirebaseFirestore.instance
         .collection("users")
         .where('email', isEqualTo: user.email)
         .get();
     print("get user");
+    print(result);
     List<Map> currentUserList = result.docs.map((doc) => doc.data()).toList();
-    _currentUser = UserModel(
-        username: currentUserList[0]["name"],
-        email: currentUserList[0]["email"],
-        photoURL: currentUserList[0]["photoURL"] ?? "");
+    print(currentUserList);
+    if (currentUserList.isNotEmpty) {
+      _currentUser = UserModel(
+          username: currentUserList[0]["username"],
+          email: currentUserList[0]["email"],
+          photoURL: currentUserList[0]["photoURL"] ?? "");
+    }
   }
 
   get currentUser => _currentUser;
+
   uploadUserData(userData) {
-    FirebaseFirestore.instance.collection("users").add(userData);
+    FirebaseFirestore.instance.collection("users").doc(user.uid).set(userData);
   }
+
+  get newMethod => user;
 
   _generateChatRoomId(List names) {
     names.sort((a, b) => a.compareTo(b));
@@ -94,8 +104,6 @@ class DatabaseController extends LoginController {
   }
 
   Stream<QuerySnapshot> getUserChatRooms(int size) {
-    print("get rooms");
-    print(user);
     return FirebaseFirestore.instance
         .collection("chat-rooms")
         .where('emails', arrayContains: currentUser.email)
@@ -132,5 +140,45 @@ class DatabaseController extends LoginController {
         .orderBy("time")
         .limit(_shownMessagesCount)
         .snapshots();
+  }
+
+  uploadFile(String destination, File file) async {
+    try {
+      final fireStorage = FirebaseStorage.instance.ref(destination);
+      return fireStorage.putFile(file);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<String> getURL(path) async {
+    try {
+      print("url");
+      print(path);
+      String downloadURL =
+          await FirebaseStorage.instance.ref(path).getDownloadURL();
+      return downloadURL;
+      // Within your widgets:
+      // Image.network(downloadURL);
+    } catch (e) {
+      print(e);
+      return "";
+    }
+  }
+
+  setUserPhotoURL() async {
+    try {
+      print("profileImages/${_currentUser.username}-profile-photo");
+      String downloadURL = await FirebaseStorage.instance
+          .ref("profileImages/${_currentUser.username}-profile-photo")
+          .getDownloadURL();
+      print(downloadURL);
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .update({"photoURL": downloadURL}).catchError((e) => print(e));
+    } catch (e) {
+      print(e);
+    }
   }
 }

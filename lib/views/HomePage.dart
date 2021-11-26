@@ -6,6 +6,7 @@ import 'package:chat/widgets/UserCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -17,9 +18,23 @@ class HomePage extends StatefulWidget {
 class _HomeState extends State<HomePage> {
   final _loginController = Get.put(LoginController());
   final _databaseController = Get.put(DatabaseController());
-
+  final storage = new FlutterSecureStorage();
+  String photoURL = "";
   void initState() {
-    _databaseController.getUserByEmail();
+    userValidationCheck() async {
+      if (_loginController.user != null) {
+        await _loginController.isVarifiredEmailFetch();
+        if (_loginController.isVarifiredEmail) {
+          storage.write(key: 'isLoggedIn', value: "true");
+        } else {
+          Navigator.pushReplacementNamed(context, "/varify");
+        }
+        await _databaseController.getUserByEmail();
+      }
+    }
+
+    userValidationCheck();
+    super.initState();
   }
 
   Widget room(roomMap) {
@@ -43,7 +58,7 @@ class _HomeState extends State<HomePage> {
     int allMessagesSize = 10;
     print(_loginController.user);
     return Scaffold(
-      endDrawer: SideDrawer(_loginController),
+      endDrawer: SideDrawer(),
       appBar: AppBarMain(),
       body: Center(
         child: Container(

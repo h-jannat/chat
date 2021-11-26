@@ -10,12 +10,9 @@ class LoginController extends GetxController {
   get isVarifiredEmail => _isVarifiredEmail;
 
   Future signInEmailPass(String email, String password) async {
-    print("Sign in email pass");
-    print(_firebaseAuth.currentUser);
     try {
       UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      print("result");
 
       print(result);
     } on FirebaseAuthException catch (e) {
@@ -26,7 +23,7 @@ class LoginController extends GetxController {
   Future signUpEmailPass(String email, String password) async {
     try {
       print("sign up");
-      print(email+password);
+      print(email + password);
       UserCredential result = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 

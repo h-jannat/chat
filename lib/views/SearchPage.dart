@@ -34,7 +34,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarMain(),
-      endDrawer: SideDrawer(_loginController),
+      endDrawer: SideDrawer(),
       body: SingleChildScrollView(
         child: Container(
           width: 1000,
