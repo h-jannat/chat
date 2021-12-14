@@ -6,6 +6,8 @@ class ProfilePhoto extends StatelessWidget {
   ProfilePhoto(this.url, this.radius);
 
   Widget build(BuildContext context) {
+    print('photo');
+    print(url);
     return CircleAvatar(
         radius: radius,
         backgroundColor: Colors.white,

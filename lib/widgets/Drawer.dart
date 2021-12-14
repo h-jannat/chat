@@ -1,14 +1,18 @@
 import 'dart:io';
-import 'package:path/path.dart';
 import 'package:chat/utilities/database.dart';
 import 'package:chat/widgets/ProfilePhoto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../colors.dart';
+class SideDrawer extends StatefulWidget {
+  @override
+  SideDrawerState createState() {
+    return SideDrawerState();
+  }
+}
 
-class SideDrawer extends StatelessWidget {
+class SideDrawerState extends State<SideDrawer> {
   final _databaseController = Get.put(DatabaseController());
   Future selectFile() async {
     try {
@@ -22,7 +26,6 @@ class SideDrawer extends StatelessWidget {
       final destination = 'profileImages/$fileName';
       await _databaseController.uploadFile(destination, file);
       await _databaseController.setUserPhotoURL();
-      await _databaseController.getUserByEmail();
     } catch (e) {
       print(e);
     }

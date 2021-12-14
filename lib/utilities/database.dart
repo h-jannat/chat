@@ -43,7 +43,7 @@ class DatabaseController extends LoginController {
     print("get user");
     print(result);
     List<Map> currentUserList = result.docs.map((doc) => doc.data()).toList();
-    print(currentUserList);
+
     if (currentUserList.isNotEmpty) {
       _currentUser = UserModel(
           username: currentUserList[0]["username"],
@@ -53,6 +53,8 @@ class DatabaseController extends LoginController {
   }
 
   get currentUser => _currentUser;
+
+  updatePhotoURL(url) => _currentUser.photoURL = url;
 
   uploadUserData(userData) {
     FirebaseFirestore.instance.collection("users").doc(user.uid).set(userData);
@@ -172,7 +174,7 @@ class DatabaseController extends LoginController {
       String downloadURL = await FirebaseStorage.instance
           .ref("profileImages/${_currentUser.username}-profile-photo")
           .getDownloadURL();
-      print(downloadURL);
+      updatePhotoURL(downloadURL);
       FirebaseFirestore.instance
           .collection("users")
           .doc(user.uid)
